@@ -6,8 +6,8 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\LoanSettingController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 // 1. First visit -> Redirect to Dashboard if logged in, otherwise to Login
 Route::get('/', function () {
@@ -54,9 +54,9 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/loans/{loan}/approve', [LoanController::class, 'approve'])
         ->middleware('role:admin,loan_officer')->name('loans.approve');
 
-    // Admin: បើកប្រាក់
+    // Admin + Loan Officer: បើកប្រាក់
     Route::post('/loans/{loan}/disburse', [LoanController::class, 'disburse'])
-        ->middleware('role:admin')->name('loans.disburse');
+        ->middleware('role:admin,loan_officer')->name('loans.disburse');
 
     // All roles: មើលកាលវិភាគ
     Route::get('/loans/{loan}/schedule', [LoanController::class, 'schedule'])
@@ -72,16 +72,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/loans/{loan}', [LoanController::class, 'show'])
         ->name('loans.show');
 
-    // Admin: Overdue Dashboard
+    // Admin + Loan Officer + Cashier: Overdue Dashboard
     Route::get('/dashboard/overdue', [LoanController::class, 'overdueDashboard'])
-        ->middleware('role:admin')->name('dashboard.overdue');
+        ->middleware('role:admin,loan_officer,cashier')->name('dashboard.overdue');
 
-    // Admin: Loan Settings (interest rate)
+    // Admin + Loan Officer: Loan Settings (interest rate)
     Route::get('/loans-settings', [LoanSettingController::class, 'edit'])
-        ->middleware('role:admin')->name('loans.settings.edit');
+        ->middleware('role:admin,loan_officer')->name('loans.settings.edit');
     Route::put('/loans-settings', [LoanSettingController::class, 'update'])
-        ->middleware('role:admin')->name('loans.settings.update');
+        ->middleware('role:admin,loan_officer')->name('loans.settings.update');
 });
 
 // 3. Breeze Authentication Routes (login, register, logout, etc.)
-    require __DIR__.'/auth.php';
+require __DIR__.'/auth.php';

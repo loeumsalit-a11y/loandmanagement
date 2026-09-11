@@ -19,8 +19,8 @@
                 </li>
 
                 @auth
-                    {{-- Master Data Management (For Staff: Admin, Loan Officer, Cashier) --}}
-                    @if(auth()->user()->isAdmin() || auth()->user()->isLoanOfficer() || auth()->user()->isCashier())
+                    {{-- Master Data Management (Admin only) --}}
+                    @if(auth()->user()->isAdmin())
                         <li class="nav-header">MANAGEMENT</li>
                         <li class="nav-item">
                             <a href="{{ route('categories.index') }}" class="nav-link">
@@ -79,14 +79,18 @@
                         </li>
                     @endif
 
-                    {{-- Admin Only options --}}
-                    @if(auth()->user()->isAdmin())
+                    {{-- Admin + Loan Officer + Cashier: Overdue Loans --}}
+                    @if(auth()->user()->isAdmin() || auth()->user()->isLoanOfficer() || auth()->user()->isCashier())
                         <li class="nav-item">
                             <a href="{{ route('dashboard.overdue') }}" class="nav-link">
                                 <i class="nav-icon bi bi-exclamation-triangle text-danger"></i>
                                 <p>Overdue Loans</p>
                             </a>
                         </li>
+                    @endif
+
+                    {{-- Admin + Loan Officer: Loan Settings --}}
+                    @if(auth()->user()->isAdmin() || auth()->user()->isLoanOfficer())
                         <li class="nav-item">
                             <a href="{{ route('loans.settings.edit') }}" class="nav-link">
                                 <i class="nav-icon bi bi-sliders text-warning"></i>

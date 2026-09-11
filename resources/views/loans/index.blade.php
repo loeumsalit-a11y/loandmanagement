@@ -60,15 +60,17 @@
                                         <i class="bi bi-eye"></i>
                                     </a>
                                     
-                                    @if ($loan->status === 'Approved' && auth()->user()->isAdmin())
-                                        <form action="{{ route('loans.disburse', $loan) }}" method="POST" class="d-inline"
-                                            onsubmit="return confirm('តើអ្នកចង់បើកប្រាក់កម្ចីនេះមែនទេ?')">
-                                            @csrf
-                                            <button type="submit" class="btn btn-success btn-sm" title="បើកប្រាក់">
-                                                <i class="bi bi-cash"></i>
-                                            </button>
-                                        </form>
-                                    @endif
+                                    @can('disburse', $loan)
+                                        @if ($loan->status === 'Approved')
+                                            <form action="{{ route('loans.disburse', $loan) }}" method="POST" class="d-inline"
+                                                onsubmit="return confirm('តើអ្នកចង់បើកប្រាក់កម្ចីនេះមែនទេ?')">
+                                                @csrf
+                                                <button type="submit" class="btn btn-success btn-sm" title="បើកប្រាក់">
+                                                    <i class="bi bi-cash"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    @endcan
 
                                     @if ($loan->status === 'Disbursed')
                                         <a href="{{ route('loans.schedule', $loan) }}" class="btn btn-primary btn-sm" title="កាលវិភាគ">

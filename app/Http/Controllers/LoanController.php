@@ -238,6 +238,16 @@ class LoanController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('loans.my_loans', compact('loans'));
+        // Installments that are due today or overdue (for the alert banner)
+        $dueAlerts = LoanSchedule::whereHas('loan', function ($q) {
+            $q->where('customer_id', auth()->id());
+        })
+            ->with('loan')
+            ->whereIn('status', ['Pending', 'Overdue'])
+            ->whereDate('due_date', '<=', now()->toDateString())
+            ->orderBy('due_date')
+            ->get();
+
+        return view('loans.my_loans', compact('loans', 'dueAlerts'));
     }
 }

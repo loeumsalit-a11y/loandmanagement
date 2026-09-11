@@ -28,7 +28,7 @@ class LoanPolicy
      */
     public function disburse(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isLoanOfficer();
     }
 
     /**
